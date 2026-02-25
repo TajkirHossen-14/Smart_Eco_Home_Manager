@@ -1,0 +1,424 @@
+// Smart Eco Home Manager 
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+
+
+public class SmartEcoHomeManager 
+{
+    public static void main(String[] args) 
+    {
+        Scanner scanner = new Scanner(System.in);
+
+        List<Room> rooms = new ArrayList<>();
+
+        Room living = new Room("Living Room");
+        living.addAppliance(new Appliance("Light", 0.1));
+        living.addAppliance(new Appliance("Fan", 0.2));
+        living.addAppliance(new Appliance("TV", 0.15));
+        rooms.add(living);
+
+        Room bedroom = new Room("Bedroom");
+        bedroom.addAppliance(new Appliance("Light", 0.1));
+        bedroom.addAppliance(new Appliance("Fan", 0.2));
+        rooms.add(bedroom);
+
+        Room kitchen = new Room("Kitchen");
+        kitchen.addAppliance(new Appliance("Light", 0.05));
+        kitchen.addAppliance(new Appliance("Fridge", 0.15));
+        kitchen.addAppliance(new Appliance("Exhaust Fan", 0.08));
+        rooms.add(kitchen);
+
+        WaterMonitor waterMonitor = new WaterMonitor();
+        GreenEnergyManager greenEnergy = new GreenEnergyManager();
+        Double currentTemperature = null;
+
+        while (true) 
+        {
+            System.out.println("\n- | Smart Eco Home Manager | -\n");
+            System.out.println("1. Control Room Appliances");
+            System.out.println("2. Monitor Water Usage");
+            System.out.println("3. Monitor Green Energy");
+            System.out.println("4. Temperature Advisor");
+            System.out.println("5. Show Report");
+            System.out.println("6. Save Report to File");
+            System.out.println("0. Exit");
+            System.out.print("\nEnter Option : ");
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) 
+            {
+                case 1:
+                    System.out.println("\nSelect Room :");
+                    for (int i = 0; i < rooms.size(); i++) 
+                    {
+                        System.out.println((i + 1) + ". " + rooms.get(i).getName());
+                    }
+                    System.out.print("Enter Room Number: ");
+                    int roomChoice = scanner.nextInt();
+                    scanner.nextLine();
+                    if (roomChoice > 0 && roomChoice <= rooms.size()) 
+                    {
+                        rooms.get(roomChoice - 1).controlAppliances(scanner);
+                    } 
+                    else 
+                    {
+                        System.out.println("Invalid Room.");
+                    }
+                    break;
+
+                case 2:
+                    System.out.println("\n--- Water Usage ---");
+                    System.out.println("1. Bathroom\n2. Kitchen\n3. Garden");
+                    System.out.print("Select Source: ");
+                    int source = scanner.nextInt();
+                    System.out.print("Enter amount (liters): ");
+                    double amount = scanner.nextDouble();
+                    scanner.nextLine();
+                    waterMonitor.addWaterUsage(source, amount);
+                    break;
+
+                case 3:
+                    if (currentTemperature == null) 
+                    {
+                        System.out.print("Enter Current Temperature (°C): ");
+                        currentTemperature = scanner.nextDouble();
+                        scanner.nextLine();
+                    }
+                    greenEnergy.monitorGreenEnergy(scanner, currentTemperature, rooms);
+                    break;
+
+                case 4:
+                    System.out.print("Enter Current Temperature (°C): ");
+                    currentTemperature = scanner.nextDouble();
+                    scanner.nextLine();
+                    TemperatureAdvisor.suggest(currentTemperature);
+                    break;
+
+                case 5:
+                    System.out.println("\n=== Smart Eco Home Report ===");
+                    double totalEnergy = 0;
+                    for (Room room : rooms) 
+                    {
+                        totalEnergy += room.getEnergyConsumption();
+                    }
+                    System.out.printf("Total Energy Consumption : %.2f kWh\n", totalEnergy);
+                    System.out.printf("Total Green Energy Generated : %.2f kWh\n", greenEnergy.getTotalGenerated());
+                    System.out.printf("\nWater Used : %.0f liters [ %s]\n",
+                            waterMonitor.getTotalUsage(),
+                            waterMonitor.getShortStatus());
+                    if (currentTemperature != null) 
+                    {
+                        TemperatureAdvisor.suggest(currentTemperature);
+                    } 
+                    else 
+                    {
+                        System.out.println("Temperature Data Not Available.");
+                    }
+                    break;
+
+                case 6:
+                    String report = "=== Smart Eco Home Report ===\n";
+                    double energy = 0;
+                    for (Room room : rooms) 
+                    {
+                        energy += room.getEnergyConsumption();
+                    }
+                    report += String.format("Total Energy Consumption : %.2f kWh\n", energy);
+                    report += String.format("Total Green Energy Generated : %.2f kWh\n", greenEnergy.getTotalGenerated());
+                    report += "\nWater Used : " + waterMonitor.getTotalUsage() + " liters\n" + waterMonitor.getStatus();
+                    if (currentTemperature != null) 
+                    {
+                        report += String.format("\nTemperature: %.1f°C\n", currentTemperature);
+                    } 
+                    else 
+                    {
+                        report += "\nTemperature: Not Provided\n";
+                    }
+                    FileManager.saveReport(report);
+                    break;
+
+                case 0:
+                    System.out.println("Exiting Smart Eco Home Manager.");
+                    return;
+
+                default:
+                    System.out.println("Invalid Option. Try Again.");
+            }
+        }
+    }
+}
+
+// Appliance Class
+class Appliance 
+{
+    private String name;
+    private boolean isOn;
+    private double energyConsumption;
+
+    public Appliance(String name, double energyConsumption) 
+    {
+        this.name = name;
+        this.energyConsumption = energyConsumption;
+        this.isOn = false;
+    }
+
+    public void toggle() 
+    {
+        if (isOn == true) 
+        {
+            isOn = false;
+        } 
+        else 
+        {
+            isOn = true;
+        }
+    }
+
+    public boolean isOn() 
+    {
+        return isOn;
+    }
+
+    public double getEnergyConsumption() 
+    {
+        if (isOn) 
+        {
+            return energyConsumption;
+        } 
+        else 
+        {
+            return 0;
+        }
+    }
+
+    public String getName() 
+    {
+        return name;
+    }
+
+    @Override
+    public String toString() 
+    {
+        if (isOn == true)
+            return name + " [ON]";
+        else
+            return name + " [OFF]";
+    }
+}
+
+// Room Class
+class Room 
+{
+    private String name;
+    private ArrayList<Appliance> appliances;
+
+    public Room(String name) 
+    {
+        this.name = name;
+        appliances = new ArrayList<>();
+    }
+
+    public void addAppliance(Appliance appliance) 
+    {
+        appliances.add(appliance);
+    }
+
+    public void controlAppliances(Scanner scanner) 
+    {
+        while (true) 
+        {
+            System.out.println("\n--- " + name + " Appliances ---");
+            
+            for (int i = 0; i < appliances.size(); i++) 
+            {
+                System.out.println((i + 1) + ". " + appliances.get(i));
+            }
+            System.out.println("0. Go Back");
+            System.out.print("Select Appliance Number to Toggle: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); 
+
+            if (choice == 0) break;
+
+            if (choice > 0 && choice <= appliances.size()) 
+            {
+                Appliance selected = appliances.get(choice - 1);
+                selected.toggle();
+                
+                if (selected.isOn()) 
+                {
+                    System.out.println(selected.getName() + " is now ON");
+                } 
+                else 
+                {
+                    System.out.println(selected.getName() + " is now OFF");
+                }
+            } 
+            else 
+            {
+                System.out.println("Invalid choice!");
+            }
+        }
+    }
+
+    public double getEnergyConsumption() 
+    {
+        double total = 0;
+        
+        for (Appliance appliance : appliances) 
+        {
+            total += appliance.getEnergyConsumption();
+        }
+        return total;
+    }
+
+    public String getName() 
+    {
+        return name;
+    }
+}
+
+// WaterMonitor Class
+class WaterMonitor 
+{
+    private double bathroomUsage;
+    private double kitchenUsage;
+    private double gardenUsage;
+
+    public void addWaterUsage(int source, double amount) 
+    {
+        switch (source) 
+        {
+            case 1:
+                bathroomUsage += amount; break;
+            case 2:
+                kitchenUsage += amount; break;
+            case 3:
+                gardenUsage += amount; break;
+            default:
+                System.out.println("Invalid option.");
+        }
+    }
+
+    public void showUsage() 
+    {
+        System.out.println("\n-- Water Usage Report --");
+        System.out.println("Bathroom: " + bathroomUsage + " liters");
+        System.out.println("Kitchen: " + kitchenUsage + " liters");
+        System.out.println("Garden: " + gardenUsage + " liters");
+    }
+
+    public String getStatus() 
+    {
+        return "Bathroom: " + bathroomUsage + "L\n" +
+               "Kitchen: " + kitchenUsage + "L\n" +
+               "Garden: " + gardenUsage + "L\n";
+    }
+
+    public String getShortStatus() 
+    {
+        return "Bathroom: " + bathroomUsage + " liters, Kitchen: " + kitchenUsage +
+               " liters, Garden: " + gardenUsage + " liters";
+    }
+
+    public double getTotalUsage() 
+    {
+        return bathroomUsage + kitchenUsage + gardenUsage;
+    }
+}
+
+// GreenEnergyManager Class
+class GreenEnergyManager 
+{
+    private double totalGenerated;
+
+    public void generateEnergy(double temperature, double energyUsed, boolean isDaytime) {
+        double factor = 1.0;
+
+        if (!isDaytime) {
+            factor *= 0.5;
+        }
+
+        if (temperature >= 30) {
+            factor *= 1.2;
+        } else if (temperature < 18) {
+            factor *= 0.7;
+        }
+
+        if (energyUsed > 1.5) {
+            factor *= 1.3;
+        } else if (energyUsed < 0.5) {
+            factor *= 0.8;
+        }
+
+        double generated = factor * 1.0;
+        totalGenerated += generated;
+
+        System.out.println("\n--- Green Energy Monitor ---");
+        System.out.println("Daytime: " + (isDaytime ? "Yes" : "No"));
+        System.out.printf("Total Energy Used: %.2f kWh\n", energyUsed);
+        System.out.printf("Based on current conditions, green energy generated: %.2f kWh\n", generated);
+    }
+
+    public void monitorGreenEnergy(Scanner scanner, double temperature, List<Room> rooms) {
+        System.out.print("Is it daytime? (yes/no): ");
+        String timeInput = scanner.nextLine();
+        boolean isDaytime = timeInput.equalsIgnoreCase("yes");
+
+        double totalEnergyUsed = 0;
+        for (Room room : rooms) {
+            totalEnergyUsed += room.getEnergyConsumption();
+        }
+
+        generateEnergy(temperature, totalEnergyUsed, isDaytime);
+    }
+
+    public double getTotalGenerated() 
+    {
+        return totalGenerated;
+    }
+}
+
+// TemperatureAdvisor Class
+class TemperatureAdvisor 
+{
+    public static void suggest(double temperature) 
+    {
+        System.out.println("Current Temperature : " + temperature + "°C");
+        
+        if (temperature > 30) 
+        {
+            System.out.println("It's Hot! Use Fan or AC and Stay Hydrated.");
+        } 
+        else if (temperature < 15) 
+        {
+            System.out.println("It's Cold! Close Windows, Use Heater or Wear Warm Clothes.");
+        } 
+        else 
+        {
+            System.out.println("Temperature is Moderate.");
+        }
+    }
+}
+
+// FileManager Class
+class FileManager 
+{
+    public static void saveReport(String report) 
+    {
+        try (FileWriter writer = new FileWriter("EcoHomeReport.txt")) 
+        {
+            writer.write(report);
+            System.out.println("Report Saved to EcoHomeReport.txt");
+        } 
+        catch (IOException e) 
+        {
+            System.out.println("Error Saving Report: " + e.getMessage());
+        }
+    }
+}
