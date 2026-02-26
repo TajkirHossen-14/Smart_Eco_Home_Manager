@@ -1,7 +1,7 @@
 # 🌿 Smart Eco Home Manager
 
-Smart Eco Home Manager is a Java-based console application that simulates an intelligent and eco-friendly home management system. 
-The project focuses on energy efficiency, water usage monitoring, green energy simulation, and temperature-based smart suggestions to promote sustainable living.
+Smart Eco Home Manager is a Java-based console application that simulates an intelligent and eco-friendly home management system.  
+The project focuses on energy efficiency, water usage monitoring, green energy simulation and temperature-based smart suggestions to promote sustainable living.
 
 This system allows users to control household appliances, monitor resource consumption, generate reports and save system data to a file — all using Object-Oriented Programming (OOP) principles.
 
