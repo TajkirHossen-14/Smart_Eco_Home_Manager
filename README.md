@@ -12,7 +12,7 @@ This system allows users to control household appliances, monitor resource consu
 ### 🏠 Room & Appliance Control
 - Multiple rooms (Living Room, Bedroom, Kitchen)
 - Each room contains multiple appliances (Light, Fan, TV, Fridge, etc.)
-- Turn appliances ON/OFF dynamically
+- Turn appliances ON / OFF dynamically
 - Real-time energy consumption calculation
 
 ### 💧 Water Usage Monitoring
