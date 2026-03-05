@@ -16,7 +16,7 @@ This system allows users to control household appliances, monitor resource consu
 - Real-time energy consumption calculation
 
 ### 💧 Water Usage Monitoring
-- Track water usage for:
+- Track water usage for :
   - Bathroom
   - Kitchen
   - Garden
@@ -24,14 +24,14 @@ This system allows users to control household appliances, monitor resource consu
 - Detailed water usage summary
 
 ### 🌱 Green Energy Simulation
-- Generates green energy based on:
+- Generates green energy based on :
   - Current temperature
   - Total energy usage
   - Daytime / Nighttime input
 - Tracks total generated green energy
 
 ### 🌡️ Temperature Advisor
-- Provides smart suggestions based on temperature:
+- Provides smart suggestions based on temperature :
   - Hot weather advice
   - Cold weather advice
   - Moderate condition notification
@@ -80,7 +80,7 @@ This system allows users to control household appliances, monitor resource consu
 
 ## 🎯 Project Purpose
 
-The goal of this project is to simulate a smart and eco-conscious home environment that promotes:
+The goal of this project is to simulate a smart and eco-conscious home environment that promotes :
 
 - Energy efficiency
 - Resource monitoring
