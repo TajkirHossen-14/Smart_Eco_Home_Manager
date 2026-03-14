@@ -37,7 +37,7 @@ This system allows users to control household appliances, monitor resource consu
   - Moderate condition notification
 
 ### 📊 Smart Reporting System
-- Displays:
+- Displays :
   - Total energy consumption
   - Total green energy generated
   - Water usage summary
