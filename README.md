@@ -1,7 +1,7 @@
 <div align="center">
 
   <p align="center">
-  <img src="Banner/SEHM Banner.png" alt="Smart ECo Home Managert Banner" width="100%">
+  <img src="Banner/SEHM Banner 2.png" alt="Smart ECo Home Managert Banner" width="100%">
 </p>
 
 <br>
